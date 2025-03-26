@@ -1,0 +1,30 @@
+{
+    "name": "waanverse-react-routes",
+    "version": "1.0.0",
+    "main": "dist/index.js",
+    "module": "dist/index.mjs",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "build": "tsup"
+    },
+    "keywords": [
+        "react",
+        "router",
+        "routes",
+        "typescript",
+        "waanverse",
+        "react-routes"
+    ],
+    "publisher": "Waanverse Labs",
+    "author": "Waanverse Labs",
+    "license": "MIT",
+    "description": "A lightweight and customizable route management library for React applications using React Router. This library allows you to define and extend route names while ensuring TypeScript autocompletion.",
+    "devDependencies": {
+        "tsup": "^8.4.0",
+        "typescript": "^5.8.2"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/waanverse/waanverse-react-routes.git"
+    }
+}
