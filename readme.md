@@ -40,16 +40,15 @@ The first step is to extend the `RouteNameType` to define your own custom routes
 ```ts
 import { RouteType, urlpatterns } from "waanverse-react-routes";
 
-// Augment the global namespace to define custom route names
-export type CustomRouteName = "Dashboard" | "Deposit";
+export type CustomRouteName = "Home" | "Account"|"Search"|"Account Posts";
 
 // Define your custom routes
 export const userRoutes: RouteType[] = [
-    { name: "Dashboard", path: "/" },
-    { name: "Deposit", path: "/deposit" },
-    { name: "Transactions", path: "/transactions" },
-    { name: "Transaction Details", path: "/transactions/:id" },
-    { name: "Login", path: "/login" },
+    { name: "Home", path: "/" },
+    {name:"Account",path:"/account/:id"}
+    {name:"Search",path:"/search"},
+    {name:"Account Posts",path:"/account/:id/posts"}
+
 ];
 
 // Add the custom routes to the urlpatterns
@@ -69,9 +68,10 @@ Once you’ve set up your routes, you can use the `getPath` function to generate
 import { getPath } from "waanverse-react-routes";
 
 // Example usage
-const dashboardUrl = getPath("Dashboard"); // "/"
-const depositUrl = getPath("Deposit"); // "/deposit"
-const transactionDetailsUrl = getPath("Transaction Details", { id: 123 }); // "/transactions/123"
+const HomeUrl = getPath("Home"); // "/"
+const accountUrl = getPath("Account", { id: 123 }); // "/account/123"
+const searchUrl = getPath("Search", undefined, { q: "abc" }); // "/search?q=abc"
+const accountPostsUrl = getPath("Account Posts", { id: 123 }, { content: "posts" }); // "/account/123?content=posts"
 ```
 
 #### **Route Parameters and Query Strings**
@@ -116,56 +116,4 @@ A string representing the URL path.
 ```ts
 const dashboardUrl = getPath("Dashboard"); // "/"
 const userProfileUrl = getPath("UserProfile", { id: 456 }); // "/user/456"
-```
-
----
-
-## Extending Routes
-
-To extend the route names for your own application:
-
-1. **Create a global extension of the `RouteNameType`.**
-2. **Define the custom routes** in the `urlpatterns` array.
-
-Example:
-
-```ts
-// Extend route names
-declare global {
-    namespace WaanverseRouter {
-        export type CustomRouteName = "Dashboard" | "Profile" | "Settings";
-    }
-}
-
-// Define routes
-export const customRoutes: RouteType[] = [
-    { name: "Dashboard", path: "/" },
-    { name: "Profile", path: "/profile" },
-    { name: "Settings", path: "/settings" },
-];
-
-urlpatterns.push(...customRoutes);
-```
-
----
-
-## Contributing
-
-If you'd like to contribute to this project, feel free to fork the repository and submit pull requests. Any help is appreciated!
-
----
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-```
-
-### Explanation of the `README.md`:
-
-- **Installation Instructions**: How users install the library.
-- **Usage**: Describes how users can extend their own routes and use `getPath` to generate URLs.
-- **API**: Documentation of the `getPath` function with parameters and return type.
-- **Extending Routes**: Explains how users can define their own routes with module augmentation and push them into `urlpatterns`.
-- **Contributing and License**: Sections for users who want to contribute to the library.
 ```
