@@ -26,5 +26,12 @@
     "repository": {
         "type": "git",
         "url": "https://github.com/waanverse/waanverse-react-routes.git"
+    },
+    "homepage": "https://github.com/waanverse/waanverse-react-routes",
+    "bugs": {
+        "url": "https://github.com/waanverse/waanverse-react-routes/issues"
+    },
+    "publishConfig": {
+        "access": "public"
     }
 }
