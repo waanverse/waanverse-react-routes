@@ -1,119 +1,123 @@
-Here’s a `README.md` for your `waanverse-react-routes` library:
-
-````markdown
 # Waanverse React Routes
 
-`waanverse-react-routes` is a utility library for managing dynamic route paths in React applications with TypeScript. It allows users to define their own custom routes while providing full TypeScript support, including route name autocompletion and type safety.
+`waanverse-react-routes` is a lightweight, type-safe routing utility for React applications with TypeScript. It provides a flexible way to define and manage dynamic routes with full TypeScript support, including route name autocompletion and comprehensive type safety.
 
 ## Features
 
--   **Dynamic Route Names**: Extend route names to suit your application.
--   **Type Safety**: TypeScript ensures that only valid route names are used.
--   **Customizable**: Easily customize the base route configuration by adding your own routes.
--   **Query & Path Params**: Support for route parameters and query string handling.
+- **Type-Safe Route Definitions**: Create routes with complete TypeScript type checking
+- **Dynamic Route Configuration**: Easily add and manage routes with a fluent interface
+- **Parameter Handling**: Support for both path and query parameters
+- **Intuitive API**: Simple method for generating URLs with built-in error checking
 
 ## Installation
 
 ```bash
 pnpm add waanverse-react-routes
 ```
-````
 
-Alternatively, you can use `npm` or `yarn`:
+Alternatively, use npm or yarn:
 
 ```bash
 npm install waanverse-react-routes
-```
-
-```bash
 yarn add waanverse-react-routes
 ```
 
 ## Usage
 
-### 1. **Extend Routes in Your Project**
+### 1. Create Your Router
 
-The first step is to extend the `RouteNameType` to define your own custom routes. This is done via TypeScript's **module augmentation**. Here's how to do it:
+```typescript
+import { RouterBuilder } from 'waanverse-react-routes';
 
-#### **Create a custom routes file:**
-
-```ts
-import { RouteType, urlpatterns } from "waanverse-react-routes";
-
-export type CustomRouteName = "Home" | "Account"|"Search"|"Account Posts";
-
-// Define your custom routes
-export const userRoutes: RouteType[] = [
-    { name: "Home", path: "/" },
-    {name:"Account",path:"/account/:id"}
-    {name:"Search",path:"/search"},
-    {name:"Account Posts",path:"/account/:id/posts"}
-
-];
-
-// Add the custom routes to the urlpatterns
-urlpatterns.push(...userRoutes);
+// Create a router and define your routes
+const router = new RouterBuilder()
+    .addRoute({ name: 'home', path: '/' })
+    .addRoute({ name: 'users', path: '/users' })
+    .addRoute({ name: 'userProfile', path: '/users/:userId' })
+    .addRoute({ name: 'userPosts', path: '/users/:userId/posts' });
 ```
 
-#### **What happens here:**
+### 2. Generate URLs with Type Safety
 
--   The `RouteNameType` is augmented to add your custom route names inside the `declare global` block.
--   The `urlpatterns` array is populated with your routes.
+```typescript
+// Generate simple paths
+const homePath = router.getPath('home');
+// Output: "/"
 
-### 2. **Use `getPath` to Generate URLs**
+// Generate paths with route parameters
+const userProfilePath = router.getPath('userProfile', { userId: '123' });
+// Output: "/users/123"
 
-Once you’ve set up your routes, you can use the `getPath` function to generate URLs for the defined routes.
-
-```ts
-import { getPath } from "waanverse-react-routes";
-
-// Example usage
-const HomeUrl = getPath("Home"); // "/"
-const accountUrl = getPath("Account", { id: 123 }); // "/account/123"
-const searchUrl = getPath("Search", undefined, { q: "abc" }); // "/search?q=abc"
-const accountPostsUrl = getPath("Account Posts", { id: 123 }, { content: "posts" }); // "/account/123?content=posts"
+// Generate paths with route and query parameters
+const userPostsPath = router.getPath('userPosts', 
+    { userId: '456' },  // Route parameters
+    { page: '1', sort: 'recent' }  // Query parameters
+);
+// Output: "/users/456/posts?page=1&sort=recent"
 ```
 
-#### **Route Parameters and Query Strings**
+### 3. Error Handling
 
-You can pass route parameters (like `:id`) and query parameters as follows:
+The router provides robust error handling:
 
-```ts
-const transactionDetailsUrl = getPath("Transaction Details", { id: 123 }, { ref: "abc" });
-// "/transactions/123?ref=abc"
+```typescript
+// Throws an error if the route is not defined
+router.getPath('nonexistentRoute'); 
+// Error: Route "nonexistentRoute" not found
+
+// Throws an error if required path parameters are missing
+router.getPath('userProfile'); 
+// Error: Missing required param: userId
 ```
 
-### 3. **Type Safety & Autocomplete**
+## API Reference
 
-With the module augmentation, TypeScript will now provide **autocomplete** for the route names, and will ensure that invalid route names cannot be used. For example:
+### `RouterBuilder`
 
-```ts
-const unknownUrl = getPath("UnknownRoute"); // Error: Argument of type '"UnknownRoute"' is not assignable to parameter of type 'RouteNameType'.
+#### Methods
+
+- `addRoute(route: RouteConfig<K>)`: Add a new route to the router
+  - `name`: A unique identifier for the route
+  - `path`: The URL path, which can include parameters (e.g., `/users/:userId`)
+
+- `getPath(name, params?, query?)`: Generate a URL for a specific route
+  - `name`: The route name
+  - `params` (optional): An object of path parameters
+  - `query` (optional): An object of query parameters
+
+### Route Configuration
+
+```typescript
+interface RouteConfig<K extends string> {
+    name: K;       // Unique route identifier
+    path: string;  // URL path, can include parameters
+}
 ```
 
-This makes your code more robust and easier to work with!
+## TypeScript Support
 
----
+The library provides full TypeScript support:
 
-## API
+- Autocomplete for route names
+- Type checking for route parameters
+- Compile-time errors for invalid route usage
 
-### `getPath(name: RouteNameType, params?: Record<string, string | number>, query?: Record<string, string | number>)`
-
-Generates the URL path for a given route name, with optional parameters and query strings.
-
-#### **Parameters:**
-
--   `name` (RouteNameType): The name of the route (e.g., `"Dashboard"`, `"Login"`, etc.).
--   `params` (optional): An object of parameters to replace in the route path (e.g., `{ id: 123 }`).
--   `query` (optional): An object of query parameters to append to the URL (e.g., `{ ref: "abc" }`).
-
-#### **Returns:**
-
-A string representing the URL path.
-
-### Example:
-
-```ts
-const dashboardUrl = getPath("Dashboard"); // "/"
-const userProfileUrl = getPath("UserProfile", { id: 456 }); // "/user/456"
+```typescript
+// TypeScript will provide autocompletion and type checking
+const path = router.getPath('userProfile', { userId: '123' });
 ```
+
+## Best Practices
+
+- Keep route names consistent and descriptive
+- Use lowercase for route names
+- Include all necessary parameters in route definitions
+- Leverage TypeScript's type checking
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+[Your License Here]
